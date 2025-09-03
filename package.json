@@ -1,0 +1,43 @@
+{
+  "name": "nitro-splash",
+  "version": "0.1.0",
+  "description": "CLI tool to generate SplashScreen assets (logo, background light/dark) and Nitro Module autolinking",
+  "main": "dist/index.js",
+  "bin": {
+    "nitro-splash": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "ts-node src/index.ts",
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "test": "npm run build && node dist/index.js generate -c test/splash.config.json",
+    "test:advanced": "npm run build && node dist/index.js advanced generate-themes -c test/splash.config.json -t light dark branded",
+    "test:validate": "npm run build && node dist/index.js advanced validate",
+    "clean": "rimraf dist splash-build",
+    "prepublishOnly": "npm run build",
+    "splash:demo": "npm run build && node dist/index.js generate -c test/splash.config.json --verbose"
+  },
+  "keywords": [
+    "react-native",
+    "nitro",
+    "splashscreen",
+    "cli",
+    "swift",
+    "kotlin"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^12.0.0",
+    "fs-extra": "^11.2.0",
+    "sharp": "^0.33.0"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.2",
+    "@types/node": "^20.11.19",
+    "rimraf": "^5.0.0",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.4.5"
+  }
+}
