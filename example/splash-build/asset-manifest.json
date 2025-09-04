@@ -1,0 +1,220 @@
+{
+  "generated": "2025-09-04T03:38:40.736Z",
+  "config": {
+    "logo": "./assets/logo.png",
+    "backgroundLight": "#FFFFFF",
+    "backgroundDark": "#000000",
+    "iosAppName": "ReactNativeApp"
+  },
+  "assets": {
+    "logos": [
+      {
+        "size": 16,
+        "filename": "logo-16.png",
+        "path": "./logo-16.png"
+      },
+      {
+        "size": 32,
+        "filename": "logo-32.png",
+        "path": "./logo-32.png"
+      },
+      {
+        "size": 48,
+        "filename": "logo-48.png",
+        "path": "./logo-48.png"
+      },
+      {
+        "size": 64,
+        "filename": "logo-64.png",
+        "path": "./logo-64.png"
+      },
+      {
+        "size": 72,
+        "filename": "logo-72.png",
+        "path": "./logo-72.png"
+      },
+      {
+        "size": 96,
+        "filename": "logo-96.png",
+        "path": "./logo-96.png"
+      },
+      {
+        "size": 128,
+        "filename": "logo-128.png",
+        "path": "./logo-128.png"
+      },
+      {
+        "size": 144,
+        "filename": "logo-144.png",
+        "path": "./logo-144.png"
+      },
+      {
+        "size": 192,
+        "filename": "logo-192.png",
+        "path": "./logo-192.png"
+      },
+      {
+        "size": 256,
+        "filename": "logo-256.png",
+        "path": "./logo-256.png"
+      },
+      {
+        "size": 512,
+        "filename": "logo-512.png",
+        "path": "./logo-512.png"
+      },
+      {
+        "size": 1024,
+        "filename": "logo-1024.png",
+        "path": "./logo-1024.png"
+      }
+    ],
+    "splashScreens": {
+      "light": [
+        {
+          "size": 16,
+          "filename": "splash-16.png",
+          "path": "./theme-light/splash-16.png"
+        },
+        {
+          "size": 32,
+          "filename": "splash-32.png",
+          "path": "./theme-light/splash-32.png"
+        },
+        {
+          "size": 48,
+          "filename": "splash-48.png",
+          "path": "./theme-light/splash-48.png"
+        },
+        {
+          "size": 64,
+          "filename": "splash-64.png",
+          "path": "./theme-light/splash-64.png"
+        },
+        {
+          "size": 72,
+          "filename": "splash-72.png",
+          "path": "./theme-light/splash-72.png"
+        },
+        {
+          "size": 96,
+          "filename": "splash-96.png",
+          "path": "./theme-light/splash-96.png"
+        },
+        {
+          "size": 128,
+          "filename": "splash-128.png",
+          "path": "./theme-light/splash-128.png"
+        },
+        {
+          "size": 144,
+          "filename": "splash-144.png",
+          "path": "./theme-light/splash-144.png"
+        },
+        {
+          "size": 192,
+          "filename": "splash-192.png",
+          "path": "./theme-light/splash-192.png"
+        },
+        {
+          "size": 256,
+          "filename": "splash-256.png",
+          "path": "./theme-light/splash-256.png"
+        },
+        {
+          "size": 512,
+          "filename": "splash-512.png",
+          "path": "./theme-light/splash-512.png"
+        },
+        {
+          "size": 1024,
+          "filename": "splash-1024.png",
+          "path": "./theme-light/splash-1024.png"
+        }
+      ],
+      "dark": [
+        {
+          "size": 16,
+          "filename": "splash-16.png",
+          "path": "./theme-dark/splash-16.png"
+        },
+        {
+          "size": 32,
+          "filename": "splash-32.png",
+          "path": "./theme-dark/splash-32.png"
+        },
+        {
+          "size": 48,
+          "filename": "splash-48.png",
+          "path": "./theme-dark/splash-48.png"
+        },
+        {
+          "size": 64,
+          "filename": "splash-64.png",
+          "path": "./theme-dark/splash-64.png"
+        },
+        {
+          "size": 72,
+          "filename": "splash-72.png",
+          "path": "./theme-dark/splash-72.png"
+        },
+        {
+          "size": 96,
+          "filename": "splash-96.png",
+          "path": "./theme-dark/splash-96.png"
+        },
+        {
+          "size": 128,
+          "filename": "splash-128.png",
+          "path": "./theme-dark/splash-128.png"
+        },
+        {
+          "size": 144,
+          "filename": "splash-144.png",
+          "path": "./theme-dark/splash-144.png"
+        },
+        {
+          "size": 192,
+          "filename": "splash-192.png",
+          "path": "./theme-dark/splash-192.png"
+        },
+        {
+          "size": 256,
+          "filename": "splash-256.png",
+          "path": "./theme-dark/splash-256.png"
+        },
+        {
+          "size": 512,
+          "filename": "splash-512.png",
+          "path": "./theme-dark/splash-512.png"
+        },
+        {
+          "size": 1024,
+          "filename": "splash-1024.png",
+          "path": "./theme-dark/splash-1024.png"
+        }
+      ]
+    }
+  },
+  "platforms": {
+    "ios": {
+      "imagesets": [
+        "SplashLogo.imageset"
+      ],
+      "launchscreen": "LaunchScreen.storyboard"
+    },
+    "android": {
+      "densities": [
+        "mdpi",
+        "hdpi",
+        "xhdpi",
+        "xxhdpi",
+        "xxxhdpi"
+      ],
+      "colors": [
+        "values/colors.xml",
+        "values-night/colors.xml"
+      ]
+    }
+  }
+}

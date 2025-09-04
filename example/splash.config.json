@@ -1,0 +1,7 @@
+{
+  "logo": "./assets/logo.png",
+  "backgroundLight": "#FFFFFF",
+  "backgroundDark": "#000000",
+  "iosAppName": "ReactNativeApp",
+  "platforms": ["ios", "android"]
+}
