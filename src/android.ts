@@ -1,6 +1,7 @@
 import fs from "fs-extra";
 import path from "path";
 import sharp from "sharp";
+import { XmlMerger } from "./utils/xml-merger";
 
 interface AndroidDensityMapping {
   [key: string]: {
@@ -47,6 +48,15 @@ export async function generateAndroid(config: any, logoDir: string) {
   console.log("🤖 Generating Android assets...");
   const resDir = path.resolve("android/app/src/main/res");
 
+  // Check if we're merging with existing files
+  const existingFiles = await checkExistingResourceFiles(resDir);
+  if (existingFiles.length > 0) {
+    console.log(
+      "📂 Found existing resource files - will merge instead of replace:"
+    );
+    existingFiles.forEach((file: string) => console.log(`   • ${file}`));
+  }
+
   // Generate drawable resources for different densities
   await generateDrawableResources(resDir, logoDir, config);
 
@@ -60,6 +70,24 @@ export async function generateAndroid(config: any, logoDir: string) {
   await generateSplashDrawable(resDir);
 
   console.log("🤖 Android assets generated successfully");
+}
+
+async function checkExistingResourceFiles(resDir: string): Promise<string[]> {
+  const existingFiles: string[] = [];
+  const filesToCheck = [
+    "values/colors.xml",
+    "values/styles.xml",
+    "values-night/colors.xml",
+  ];
+
+  for (const file of filesToCheck) {
+    const filePath = path.join(resDir, file);
+    if (await fs.pathExists(filePath)) {
+      existingFiles.push(file);
+    }
+  }
+
+  return existingFiles;
 }
 
 async function generateDrawableResources(
@@ -156,7 +184,12 @@ async function generateColorResources(resDir: string, config: any) {
     <color name="accent_color">${config.backgroundLight}</color>
 </resources>`;
 
-  await fs.outputFile(path.join(resDir, "values/colors.xml"), lightColorsXml);
+  // Use XmlMerger to merge with existing colors.xml instead of replacing
+  await XmlMerger.mergeXmlFile(
+    path.join(resDir, "values/colors.xml"),
+    lightColorsXml,
+    { preserveExisting: true, mergeBehavior: "merge" }
+  );
 
   // Generate dark theme colors
   const darkColorsXml = `<?xml version="1.0" encoding="utf-8"?>
@@ -174,12 +207,14 @@ async function generateColorResources(resDir: string, config: any) {
     <color name="accent_color">${config.backgroundDark}</color>
 </resources>`;
 
-  await fs.outputFile(
+  // Use XmlMerger for dark theme colors
+  await XmlMerger.mergeXmlFile(
     path.join(resDir, "values-night/colors.xml"),
-    darkColorsXml
+    darkColorsXml,
+    { preserveExisting: true, mergeBehavior: "merge" }
   );
 
-  console.log("🎨 Generated light/dark color resources");
+  console.log("🎨 Generated/merged light/dark color resources");
 }
 
 async function generateSplashDrawable(resDir: string) {
@@ -201,7 +236,7 @@ async function generateSplashDrawable(resDir: string) {
     splashDrawableXml
   );
 
-  // Generate styles for splash screen
+  // Generate styles for splash screen - use XmlMerger to preserve existing styles
   const stylesXml = `<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="SplashTheme" parent="Theme.AppCompat.Light.NoActionBar">
@@ -214,9 +249,20 @@ async function generateSplashDrawable(resDir: string) {
     </style>
 </resources>`;
 
-  await fs.outputFile(path.join(resDir, "values/styles.xml"), stylesXml);
+  // Create backup of existing styles.xml if it exists
+  const stylesPath = path.join(resDir, "values/styles.xml");
+  const backupPath = await XmlMerger.createBackup(stylesPath);
+  if (backupPath) {
+    console.log(`📁 Created backup: ${backupPath}`);
+  }
 
-  console.log("🎭 Generated splash screen drawable and styles");
+  // Use XmlMerger to merge with existing styles.xml
+  await XmlMerger.mergeXmlFile(stylesPath, stylesXml, {
+    preserveExisting: true,
+    mergeBehavior: "merge",
+  });
+
+  console.log("🎭 Generated/merged splash screen drawable and styles");
 }
 
 function adjustColorBrightness(hexColor: string, percent: number): string {
