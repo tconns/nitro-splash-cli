@@ -1,7 +1,7 @@
 {
-  "name": "nitro-splash",
-  "version": "0.1.0",
-  "description": "CLI tool to generate SplashScreen assets (logo, background light/dark) and Nitro Module autolinking",
+  "name": "nitro-splash-cli",
+  "version": "1.0.0",
+  "description": "CLI tool to generate responsive splash screen assets with LinearLayout support for React Native apps",
   "main": "dist/index.js",
   "bin": {
     "nitro-splash": "dist/index.js"
@@ -21,12 +21,35 @@
     "react-native",
     "nitro",
     "splashscreen",
+    "splash-screen",
     "cli",
+    "assets",
+    "responsive",
+    "android",
+    "ios",
+    "linearlayout",
+    "drawable",
     "swift",
     "kotlin"
   ],
-  "author": "Your Name",
+  "author": "tconns <your.email@example.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tconns/nitro-splash-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tconns/nitro-splash-cli/issues"
+  },
+  "homepage": "https://github.com/tconns/nitro-splash-cli#readme",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=14.0.0"
+  },
   "dependencies": {
     "commander": "^12.0.0",
     "fs-extra": "^11.2.0",
