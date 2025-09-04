@@ -72,6 +72,9 @@ export async function generateAndroid(config: any, logoDir: string) {
   // Generate splash drawable XML
   await generateSplashDrawable(resDir);
 
+  // Generate splash layout XML (LinearLayout format)
+  await generateSplashLayout(resDir);
+
   console.log("🤖 Android assets generated successfully");
 }
 
@@ -393,11 +396,6 @@ async function generateSplashDrawable(resDir: string) {
       'xmlns:tools="http://schemas.android.com/tools"'
     );
 
-    // // Create backup
-    // const backupPath = stylesPath + ".backup." + Date.now();
-    // await fs.copyFile(stylesPath, backupPath);
-    // console.log(`📁 Created backup: ${backupPath}`);
-
     let updatedContent = existingContent;
 
     // Add tools namespace if not present
@@ -429,6 +427,93 @@ ${splashStylesContent}
 
   console.log(
     "🎭 Generated responsive fullscreen splash screen drawable and styles"
+  );
+}
+
+async function generateSplashLayout(resDir: string) {
+  console.log("📱 Generating LinearLayout splash screens...");
+
+  // Generate splash layout for all drawable variants
+  const layoutXml = `<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:background="@color/splash_background">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/splash_logo" />
+
+</LinearLayout>`;
+
+  // Create layout directory
+  const layoutDir = path.join(resDir, "layout");
+  await fs.ensureDir(layoutDir);
+
+  // Generate main layout
+  await fs.writeFile(path.join(layoutDir, "activity_splash.xml"), layoutXml);
+
+  // Generate responsive layouts for different screen sizes
+  const responsiveLayouts = {
+    "layout-sw320dp": "Small screens (320dp+)",
+    "layout-sw480dp": "Normal screens (480dp+)",
+    "layout-sw600dp": "Large screens (600dp+)",
+    "layout-sw720dp": "XLarge screens (720dp+)",
+    "layout-land": "Landscape orientation",
+    "layout-port": "Portrait orientation",
+  };
+
+  for (const [layoutQualifier, description] of Object.entries(
+    responsiveLayouts
+  )) {
+    const responsiveLayoutDir = path.join(resDir, layoutQualifier);
+    await fs.ensureDir(responsiveLayoutDir);
+
+    await fs.writeFile(
+      path.join(responsiveLayoutDir, "activity_splash.xml"),
+      layoutXml
+    );
+
+    console.log(`📐 Generated ${layoutQualifier}: ${description}`);
+  }
+
+  // Update styles to add SplashActivity style
+  const stylesPath = path.join(resDir, "values/styles.xml");
+
+  // Check if styles.xml already exists
+  if (await fs.pathExists(stylesPath)) {
+    console.log(
+      "📄 Found existing styles.xml - updating splash layout styles..."
+    );
+
+    // Read existing content
+    const existingContent = await fs.readFile(stylesPath, "utf-8");
+
+    // Check if SplashActivity style already exists
+    if (existingContent.includes('<style name="SplashActivity"')) {
+      console.log("🎭 SplashActivity style already exists, skipping...");
+    } else {
+      // Insert SplashActivity style before closing </resources> tag
+      const splashActivityStyle = `
+    <style name="SplashActivity" parent="SplashTheme">
+        <!-- Style specifically for splash activity using layout -->
+    </style>`;
+
+      const updatedContent = existingContent.replace(
+        "</resources>",
+        `${splashActivityStyle}\n\n</resources>`
+      );
+
+      await fs.writeFile(stylesPath, updatedContent);
+      console.log("🎭 Added SplashActivity style to existing styles.xml");
+    }
+  }
+
+  console.log(
+    "📱 Generated LinearLayout splash screens with responsive layouts"
   );
 }
 
