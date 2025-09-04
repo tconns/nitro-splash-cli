@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Full screen background -->
     <item android:drawable="@color/splash_background" />
-    <item android:width="200dp" android:height="200dp" android:gravity="center">
-        <bitmap android:src="@drawable/splash_logo" />
+    
+    <!-- Responsive centered logo - uses adaptive sizing -->
+    <item android:gravity="center">
+        <bitmap 
+            android:src="@drawable/splash_logo"
+            android:gravity="center"
+            android:tileMode="disabled" />
     </item>
 </layer-list>

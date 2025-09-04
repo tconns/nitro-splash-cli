@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Splash Screen Colors -->
+
+    <!-- Color Resources -->
     <color name="splash_background">#FFFFFF</color>
     <color name="splash_primary">#FFFFFF</color>
-    
-    <!-- Additional theme colors -->
     <color name="primary_color">#FFFFFF</color>
     <color name="primary_dark_color">#cccccc</color>
     <color name="accent_color">#FFFFFF</color>
+
 </resources>

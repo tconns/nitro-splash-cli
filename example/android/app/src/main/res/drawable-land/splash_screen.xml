@@ -3,11 +3,11 @@
     <!-- Full screen background -->
     <item android:drawable="@color/splash_background" />
     
-    <!-- Responsive centered logo -->
-    <item>
+    <!-- Responsive centered logo optimized for landscape -->
+    <item android:gravity="center">
         <bitmap
-            android:gravity="center"
             android:src="@drawable/splash_logo"
+            android:gravity="center"
             android:tileMode="disabled" />
     </item>
 </layer-list>

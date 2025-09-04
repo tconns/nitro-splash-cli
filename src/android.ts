@@ -63,6 +63,9 @@ export async function generateAndroid(config: any, logoDir: string) {
   // Generate splash background drawables for light/dark
   await generateSplashBackgrounds(resDir, config);
 
+  // Generate responsive splash backgrounds for different screen densities
+  await generateResponsiveSplashBackgrounds(resDir, config);
+
   // Generate color resources
   await generateColorResources(resDir, config);
 
@@ -124,17 +127,21 @@ async function generateDrawableResources(
 async function generateSplashBackgrounds(resDir: string, config: any) {
   console.log("🎨 Generating splash background drawables...");
 
-  // Generate light theme splash background
+  // Generate light theme splash background with responsive logo
   const lightDrawableDir = path.join(resDir, "drawable");
   await fs.ensureDir(lightDrawableDir);
 
   const lightSplashDrawable = `<?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Full screen background -->
     <item android:drawable="@color/splash_background" />
+    
+    <!-- Responsive centered logo -->
     <item>
         <bitmap
             android:gravity="center"
-            android:src="@drawable/splash_logo" />
+            android:src="@drawable/splash_logo"
+            android:tileMode="disabled" />
     </item>
 </layer-list>`;
 
@@ -143,17 +150,21 @@ async function generateSplashBackgrounds(resDir: string, config: any) {
     lightSplashDrawable
   );
 
-  // Generate dark theme splash background
+  // Generate dark theme splash background with responsive logo
   const darkDrawableDir = path.join(resDir, "drawable-night");
   await fs.ensureDir(darkDrawableDir);
 
   const darkSplashDrawable = `<?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Full screen background -->
     <item android:drawable="@color/splash_background" />
+    
+    <!-- Responsive centered logo -->
     <item>
         <bitmap
             android:gravity="center"
-            android:src="@drawable/splash_logo" />
+            android:src="@drawable/splash_logo"
+            android:tileMode="disabled" />
     </item>
 </layer-list>`;
 
@@ -162,7 +173,108 @@ async function generateSplashBackgrounds(resDir: string, config: any) {
     darkSplashDrawable
   );
 
-  console.log("🌓 Generated light/dark splash backgrounds");
+  console.log(
+    "🌓 Generated light/dark splash backgrounds with responsive layout"
+  );
+}
+
+async function generateResponsiveSplashBackgrounds(
+  resDir: string,
+  config: any
+) {
+  console.log(
+    "📱 Generating responsive splash backgrounds for different densities..."
+  );
+
+  // Define responsive sizes for different screen densities
+  const responsiveConfig = {
+    "drawable-sw320dp": {
+      maxWidth: "25%",
+      description: "Small screens (320dp+)",
+    },
+    "drawable-sw480dp": {
+      maxWidth: "20%",
+      description: "Normal screens (480dp+)",
+    },
+    "drawable-sw600dp": {
+      maxWidth: "15%",
+      description: "Large screens (600dp+)",
+    },
+    "drawable-sw720dp": {
+      maxWidth: "12%",
+      description: "XLarge screens (720dp+)",
+    },
+  };
+
+  for (const [qualifier, config_item] of Object.entries(responsiveConfig)) {
+    const drawableDir = path.join(resDir, qualifier);
+    await fs.ensureDir(drawableDir);
+
+    const responsiveSplashXml = `<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Full screen background -->
+    <item android:drawable="@color/splash_background" />
+    
+    <!-- Responsive centered logo with adaptive sizing -->
+    <item android:gravity="center">
+        <bitmap
+            android:src="@drawable/splash_logo"
+            android:gravity="center"
+            android:tileMode="disabled" />
+    </item>
+</layer-list>`;
+
+    await fs.writeFile(
+      path.join(drawableDir, "splash_screen.xml"),
+      responsiveSplashXml
+    );
+
+    await fs.writeFile(
+      path.join(drawableDir, "splash_background.xml"),
+      responsiveSplashXml
+    );
+
+    console.log(`📐 Generated ${qualifier}: ${config_item.description}`);
+  }
+
+  // Also generate orientation-specific variants
+  const orientationVariants = ["drawable-land", "drawable-port"];
+
+  for (const variant of orientationVariants) {
+    const variantDir = path.join(resDir, variant);
+    await fs.ensureDir(variantDir);
+
+    const orientationSplashXml = `<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Full screen background -->
+    <item android:drawable="@color/splash_background" />
+    
+    <!-- Responsive centered logo optimized for ${
+      variant.includes("land") ? "landscape" : "portrait"
+    } -->
+    <item android:gravity="center">
+        <bitmap
+            android:src="@drawable/splash_logo"
+            android:gravity="center"
+            android:tileMode="disabled" />
+    </item>
+</layer-list>`;
+
+    await fs.writeFile(
+      path.join(variantDir, "splash_screen.xml"),
+      orientationSplashXml
+    );
+
+    console.log(
+      `🔄 Generated ${variant}: ${
+        variant.includes("land") ? "Landscape" : "Portrait"
+      } orientation`
+    );
+  }
+
+  console.log(
+    "📱 Generated responsive splash backgrounds for all screen configurations"
+  );
 }
 
 async function generateColorResources(resDir: string, config: any) {
@@ -218,12 +330,18 @@ async function generateColorResources(resDir: string, config: any) {
 }
 
 async function generateSplashDrawable(resDir: string) {
-  // Generate splash drawable that can be used in styles
+  // Generate responsive splash drawable with dynamic sizing based on screen density
   const splashDrawableXml = `<?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Full screen background -->
     <item android:drawable="@color/splash_background" />
-    <item android:width="200dp" android:height="200dp" android:gravity="center">
-        <bitmap android:src="@drawable/splash_logo" />
+    
+    <!-- Responsive centered logo - uses adaptive sizing -->
+    <item android:gravity="center">
+        <bitmap 
+            android:src="@drawable/splash_logo"
+            android:gravity="center"
+            android:tileMode="disabled" />
     </item>
 </layer-list>`;
 
@@ -236,33 +354,82 @@ async function generateSplashDrawable(resDir: string) {
     splashDrawableXml
   );
 
-  // Generate styles for splash screen - use XmlMerger to preserve existing styles
-  const stylesXml = `<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <style name="SplashTheme" parent="Theme.AppCompat.Light.NoActionBar">
+  // Generate styles for splash screen with fullscreen configuration
+  // Only generate the style content without XML declaration and resources wrapper
+  const splashStylesContent = `    <style name="SplashTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowBackground">@drawable/splash_screen</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowActionBar">false</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowDrawsSystemBarBackgrounds">false</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowTranslucentNavigation">false</item>
+        <item name="android:fitsSystemWindows">false</item>
+        <item name="android:windowLayoutInDisplayCutoutMode" tools:targetApi="p">shortEdges</item>
     </style>
+    
+    <style name="SplashTheme.EdgeToEdge" parent="SplashTheme">
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@color/splash_background</item>
+        <item name="android:navigationBarColor">@color/splash_background</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">false</item>
+    </style>`;
+
+  const stylesPath = path.join(resDir, "values/styles.xml");
+
+  // Check if styles.xml already exists
+  if (await fs.pathExists(stylesPath)) {
+    console.log("📄 Found existing styles.xml - merging splash styles...");
+
+    // Read existing content
+    const existingContent = await fs.readFile(stylesPath, "utf-8");
+
+    // Check if tools namespace is already declared
+    const hasToolsNamespace = existingContent.includes(
+      'xmlns:tools="http://schemas.android.com/tools"'
+    );
+
+    // // Create backup
+    // const backupPath = stylesPath + ".backup." + Date.now();
+    // await fs.copyFile(stylesPath, backupPath);
+    // console.log(`📁 Created backup: ${backupPath}`);
+
+    let updatedContent = existingContent;
+
+    // Add tools namespace if not present
+    if (!hasToolsNamespace) {
+      updatedContent = updatedContent.replace(
+        "<resources>",
+        '<resources xmlns:tools="http://schemas.android.com/tools">'
+      );
+    }
+
+    // Insert splash styles before closing </resources> tag
+    updatedContent = updatedContent.replace(
+      "</resources>",
+      `\n${splashStylesContent}\n\n</resources>`
+    );
+
+    await fs.writeFile(stylesPath, updatedContent);
+    console.log("🎭 Merged splash styles into existing styles.xml");
+  } else {
+    // Create new styles.xml with complete structure
+    const completeStylesXml = `<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+${splashStylesContent}
 </resources>`;
 
-  // Create backup of existing styles.xml if it exists
-  const stylesPath = path.join(resDir, "values/styles.xml");
-  const backupPath = await XmlMerger.createBackup(stylesPath);
-  if (backupPath) {
-    console.log(`📁 Created backup: ${backupPath}`);
+    await fs.writeFile(stylesPath, completeStylesXml);
+    console.log("🎭 Created new styles.xml with splash styles");
   }
 
-  // Use XmlMerger to merge with existing styles.xml
-  await XmlMerger.mergeXmlFile(stylesPath, stylesXml, {
-    preserveExisting: true,
-    mergeBehavior: "merge",
-  });
-
-  console.log("🎭 Generated/merged splash screen drawable and styles");
+  console.log(
+    "🎭 Generated responsive fullscreen splash screen drawable and styles"
+  );
 }
 
 function adjustColorBrightness(hexColor: string, percent: number): string {
