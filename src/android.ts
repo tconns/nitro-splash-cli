@@ -75,6 +75,9 @@ export async function generateAndroid(config: any, logoDir: string) {
   // Generate splash layout XML (LinearLayout format)
   await generateSplashLayout(resDir);
 
+  // Report splash styles status
+  await reportSplashStylesStatus(resDir);
+
   console.log("🤖 Android assets generated successfully");
 }
 
@@ -386,10 +389,20 @@ async function generateSplashDrawable(resDir: string) {
 
   // Check if styles.xml already exists
   if (await fs.pathExists(stylesPath)) {
-    console.log("📄 Found existing styles.xml - merging splash styles...");
+    console.log("📄 Found existing styles.xml - checking splash styles...");
 
     // Read existing content
     const existingContent = await fs.readFile(stylesPath, "utf-8");
+
+    // Check if SplashTheme already exists
+    if (existingContent.includes('<style name="SplashTheme"')) {
+      console.log(
+        "🎭 SplashTheme already exists, skipping drawable styles generation..."
+      );
+      return;
+    }
+
+    console.log("📄 SplashTheme not found - merging splash styles...");
 
     // Check if tools namespace is already declared
     const hasToolsNamespace = existingContent.includes(
@@ -486,7 +499,7 @@ async function generateSplashLayout(resDir: string) {
   // Check if styles.xml already exists
   if (await fs.pathExists(stylesPath)) {
     console.log(
-      "📄 Found existing styles.xml - updating splash layout styles..."
+      "📄 Found existing styles.xml - checking splash layout styles..."
     );
 
     // Read existing content
@@ -494,8 +507,20 @@ async function generateSplashLayout(resDir: string) {
 
     // Check if SplashActivity style already exists
     if (existingContent.includes('<style name="SplashActivity"')) {
-      console.log("🎭 SplashActivity style already exists, skipping...");
+      console.log(
+        "🎭 SplashActivity style already exists, skipping layout styles generation..."
+      );
     } else {
+      // Check if SplashTheme exists (needed as parent)
+      if (!existingContent.includes('<style name="SplashTheme"')) {
+        console.log(
+          "⚠️  Warning: SplashTheme not found, SplashActivity may not work properly"
+        );
+        console.log(
+          "💡 Consider running drawable generation first or manually add SplashTheme"
+        );
+      }
+
       // Insert SplashActivity style before closing </resources> tag
       const splashActivityStyle = `
     <style name="SplashActivity" parent="SplashTheme">
@@ -515,6 +540,58 @@ async function generateSplashLayout(resDir: string) {
   console.log(
     "📱 Generated LinearLayout splash screens with responsive layouts"
   );
+}
+
+async function reportSplashStylesStatus(resDir: string) {
+  console.log("📋 Checking splash styles status...");
+
+  const stylesPath = path.join(resDir, "values/styles.xml");
+
+  if (!(await fs.pathExists(stylesPath))) {
+    console.log("❌ styles.xml not found");
+    return;
+  }
+
+  const existingContent = await fs.readFile(stylesPath, "utf-8");
+
+  const hasSplashTheme = existingContent.includes('<style name="SplashTheme"');
+  const hasSplashActivity = existingContent.includes(
+    '<style name="SplashActivity"'
+  );
+  const hasSplashEdgeToEdge = existingContent.includes(
+    '<style name="SplashTheme.EdgeToEdge"'
+  );
+
+  console.log("\n📊 Splash Styles Status:");
+  console.log(
+    `   • SplashTheme: ${hasSplashTheme ? "✅ Present" : "❌ Missing"}`
+  );
+  console.log(
+    `   • SplashTheme.EdgeToEdge: ${
+      hasSplashEdgeToEdge ? "✅ Present" : "❌ Missing"
+    }`
+  );
+  console.log(
+    `   • SplashActivity: ${hasSplashActivity ? "✅ Present" : "❌ Missing"}`
+  );
+
+  if (hasSplashTheme && hasSplashActivity) {
+    console.log("🎉 All splash styles are properly configured!");
+  } else if (hasSplashTheme) {
+    console.log("💡 SplashTheme ready - you can use drawable approach");
+  } else {
+    console.log("⚠️  Splash styles incomplete - may need manual configuration");
+  }
+
+  // Check for potential issues
+  if (hasSplashActivity && !hasSplashTheme) {
+    console.log(
+      "⚠️  Warning: SplashActivity exists but SplashTheme is missing"
+    );
+    console.log(
+      "💡 Consider adding SplashTheme or change SplashActivity parent"
+    );
+  }
 }
 
 function adjustColorBrightness(hexColor: string, percent: number): string {
