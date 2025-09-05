@@ -343,3 +343,8 @@ MIT License - see LICENSE file for details.
 **Made with ❤️ for React Native developers**
 
 Hệ thống này giúp bạn tạo ra bộ assets hoàn chỉnh cho ứng dụng React Native với chỉ một lệnh duy nhất, hỗ trợ đầy đủ cho chế độ light/dark và tất cả các platform phổ biến.
+
+          
+<a href="https://www.buymeacoffee.com/tconns94" target="_blank">
+  <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" width="200"/>
+</a>
